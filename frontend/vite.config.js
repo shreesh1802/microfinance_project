@@ -7,6 +7,8 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    allowedHosts: true
+    allowedHosts: [
+      'adaptable-smile-production-eb48.up.railway.app'
+    ]
   }
 })
