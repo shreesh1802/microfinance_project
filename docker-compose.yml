@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+    volumes:
+      # Map the SQLite database files so data persists across container restarts
+      - ./backend/sahara.db:/app/sahara.db
+      - ./backend/sahara.db-shm:/app/sahara.db-shm
+      - ./backend/sahara.db-wal:/app/sahara.db-wal
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - backend
