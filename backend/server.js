@@ -465,5 +465,5 @@ app.get('/api/audit-log', (req, res) => {
     catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => console.log(`\n🚀 Sahara MFI API running on http://0.0.0.0:${PORT}\n✓ SQLite database ready with real SQL support\n`));
+const PORT = 5000;
+app.listen(PORT, '0.0.0.0', () => console.log(`\n🚀 Sahara MFI API running on port ${PORT}\n✓ Fixed port 5000 to match Railway networking\n`));
