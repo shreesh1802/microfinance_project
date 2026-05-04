@@ -7,6 +7,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.send('<h1>Sahara MFI API is Live!</h1><p>The backend is running successfully and ready to serve data.</p>');
+});
+
 // ─── Setup SQLite Database ──────────────────────────────────────────────────
 const db = new Database(path.join(__dirname, 'sahara.db'), { verbose: console.log });
 
@@ -462,4 +466,4 @@ app.get('/api/audit-log', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`\n🚀 Sahara MFI API running on http://localhost:${PORT}\n✓ SQLite database ready with real SQL support\n`));
+app.listen(PORT, '0.0.0.0', () => console.log(`\n🚀 Sahara MFI API running on http://0.0.0.0:${PORT}\n✓ SQLite database ready with real SQL support\n`));
