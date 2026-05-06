@@ -1,17 +1,31 @@
 version: '3.8'
 
 services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sahara
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
   backend:
     build: ./backend
     ports:
       - "5000:5000"
     environment:
       - PORT=5000
-    volumes:
-      # Map the SQLite database files so data persists across container restarts
-      - ./backend/sahara.db:/app/sahara.db
-      - ./backend/sahara.db-shm:/app/sahara.db-shm
-      - ./backend/sahara.db-wal:/app/sahara.db-wal
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=sahara
+    depends_on:
+      db:
+        condition: service_started
 
   frontend:
     build: ./frontend
@@ -21,3 +35,6 @@ services:
       - VITE_API_URL=http://localhost:5000
     depends_on:
       - backend
+
+volumes:
+  mysql_data:

@@ -16,18 +16,30 @@ function Toast({ msg, type, onClose }) {
 
 export default function AgentView() {
   const [data, setData]         = useState([]);
+  const [agents, setAgents]     = useState([]);
+  const [currentAgentId, setCurrentAgentId] = useState(1);
   const [loading, setLoading]   = useState(true);
   const [collecting, setCollecting] = useState(null);
   const [toast, setToast]       = useState(null);
   const [historyLog, setHistoryLog] = useState([]);
 
-  const fetch = useCallback(() => {
-    setLoading(true);
-    axios.get(`${API}/api/agent/collection?agentId=1`)
-      .then(res => { setData(res.data); setLoading(false); })
-      .catch(() => setLoading(false));
+  const fetchAgents = useCallback(() => {
+    axios.get(`${API}/api/agents`)
+      .then(res => {
+        setAgents(res.data);
+      })
+      .catch(console.error);
   }, []);
 
+  const fetch = useCallback(() => {
+    if (!currentAgentId) return;
+    setLoading(true);
+    axios.get(`${API}/api/agent/collection?agentId=${currentAgentId}`)
+      .then(res => { setData(res.data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [currentAgentId]);
+
+  useEffect(() => { fetchAgents(); }, [fetchAgents]);
   useEffect(() => { fetch(); }, [fetch]);
 
   const handleCollect = async (row) => {
@@ -64,9 +76,25 @@ export default function AgentView() {
     <div className="fade-in">
       {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="page-header">
-        <h1>Agent Collection View</h1>
-        <p>Logged in as: <strong>Rajesh Kumar</strong> — Ramgarh Region</p>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1>Agent Collection View</h1>
+          <p>Agent Panel</p>
+        </div>
+        <div>
+          <select 
+            className="input-field" 
+            style={{ width: '250px', padding: '0.5rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+            value={currentAgentId} 
+            onChange={e => setCurrentAgentId(Number(e.target.value))}
+          >
+            {agents.map(a => (
+              <option key={a.agent_id} value={a.agent_id}>
+                {a.name} — {a.region}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="stats-grid" style={{gridTemplateColumns:'repeat(3, 1fr)'}}>
